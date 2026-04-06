@@ -31,14 +31,19 @@ def parse_args():
 opts = parse_args()
 args = get_config(opts.config)
 
+print('Loading checkpoint', opts.evaluate)
+checkpoint = torch.load(opts.evaluate, map_location=lambda storage, loc: storage)
+
 model_backbone = load_backbone(args)
 if torch.cuda.is_available():
     model_backbone = nn.DataParallel(model_backbone)
     model_backbone = model_backbone.cuda()
+    model_backbone.load_state_dict(checkpoint['model_pos'], strict=True)
+else:
+    state_dict = checkpoint['model_pos']
+    state_dict = {k.replace('module.', '', 1): v for k, v in state_dict.items()}
+    model_backbone.load_state_dict(state_dict, strict=True)
 
-print('Loading checkpoint', opts.evaluate)
-checkpoint = torch.load(opts.evaluate, map_location=lambda storage, loc: storage)
-model_backbone.load_state_dict(checkpoint['model_pos'], strict=True)
 model_pos = model_backbone
 model_pos.eval()
 testloader_params = {
