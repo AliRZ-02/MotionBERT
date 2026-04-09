@@ -25,7 +25,7 @@ num_heads: 8
 att_fuse: True
 
 # Data
-data_root: ../DL_Project/pose_3d_v3/
+data_root: ../pose_3d_v3/
 subset_list: [frame_81]
 dt_file: h36m_sh_conf_cam_source_final.pkl
 clip_len: 243
